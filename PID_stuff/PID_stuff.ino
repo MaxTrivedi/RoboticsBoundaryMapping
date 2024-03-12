@@ -4,13 +4,13 @@
 # include "kinematics.h"
 # include "pid.h"
 
+
 // create instance of motor and linesensor classes
 LineSensor_c line_sensors;
 Motors_c motors;
 Kinematics_c kinematics;
 PID_c spd_pid_left;
 PID_c spd_pid_right;
-PID_c heading_pid;
 
 unsigned long start_time;
 unsigned long end_time;
@@ -39,7 +39,6 @@ void setup() {
   // setup kp, ki, kd
   spd_pid_left.initialise(100 , 0.5, -100);
   spd_pid_right.initialise(100 , 0.5, -100);
-  heading_pid.initialise(1 , 0, -1);
 
   // Configure the Serial port
   Serial.begin(9600);
@@ -56,12 +55,10 @@ void setup() {
   ave_spd_left = 0.0;
   ave_spd_right = 0.0;
 
-  demand = 1.0;
+  demand = 0.5;
 
   spd_pid_left.reset();
   spd_pid_right.reset();
-  heading_pid.reset();
-  
   pid_test_ts = millis();
 }
 
@@ -102,39 +99,33 @@ void loop() {
       Serial.print("\n");
     */
 
-    float heading_feedback;
+
     float pwm_l;
     float pwm_r;
 
-    line_sensors.updateSensors();
-    W = line_sensors.weightedMeasurement();
-    heading_feedback = heading_pid.update(W , 0);
 
-    pwm_l = spd_pid_left.update(ave_spd_left, 1 + heading_feedback);
-    pwm_r = spd_pid_right.update(ave_spd_right, 1 - heading_feedback);
+    pwm_l = spd_pid_left.update(ave_spd_left, demand);
+    pwm_r = spd_pid_right.update(ave_spd_right, -demand);
 
     
     motors.setMotorPower(pwm_l, pwm_r);
 
-    Serial.print( W );
+    Serial.print( ave_spd_left );
     Serial.print(",");
-    Serial.print( heading_feedback );
+    Serial.print( demand );
     Serial.print(",");
-    //Serial.print( pwm_l );
-    //Serial.print(",");
-    //Serial.print( pwm_r );
+    Serial.print( ave_spd_right );
     Serial.print("\n");
-    
 
     
   }
   
   
-  if ( millis() - pid_test_ts > 4000) {
+  if ( millis() - pid_test_ts > 2000) {
     pid_test_ts = millis();
 
     //demand = demand * -1;
-    demand = 0;
+    //demand = 0;
   }
     
   /*
@@ -147,4 +138,5 @@ void loop() {
   Serial.print("\n");
   */
 
+}
 }
