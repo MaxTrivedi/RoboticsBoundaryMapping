@@ -12,13 +12,7 @@ Kinematics_c kinematics;
 PID_c spd_pid_left;
 PID_c spd_pid_right;
 
-unsigned long start_time;
-unsigned long end_time;
-unsigned long elapsed_time;
-
 unsigned long update_ts; // timestamp
-
-unsigned long pid_test_ts;
 
 long prev_count_left;
 long prev_count_right;
@@ -37,8 +31,8 @@ void setup() {
   setupEncoder1();
 
   // setup kp, ki, kd
-  spd_pid_left.initialise(100 , 0.5, -100);
-  spd_pid_right.initialise(100 , 0.5, -100);
+  spd_pid_left.initialise(100 , 0.5, -50);
+  spd_pid_right.initialise(100 , 0.5, -50);
 
   // Configure the Serial port
   Serial.begin(9600);
@@ -55,11 +49,10 @@ void setup() {
   ave_spd_left = 0.0;
   ave_spd_right = 0.0;
 
-  demand = 0.5;
+  demand = 0;
 
   spd_pid_left.reset();
   spd_pid_right.reset();
-  pid_test_ts = millis();
 }
 
 void loop() {
@@ -92,22 +85,13 @@ void loop() {
     ave_spd_left = (ave_spd_left * 0.7) + (speed_left * 0.3);
     ave_spd_right = (ave_spd_right * 0.7) + (speed_right * 0.3);
 
-    /*
-      Serial.print( speed_left * 100 );
-      Serial.print(",");
-      Serial.print( ave_spd_left * 100 );
-      Serial.print("\n");
-    */
-
-
     float pwm_l;
     float pwm_r;
 
+    demand = 0.5;
 
-    pwm_l = spd_pid_left.update(ave_spd_left, demand);
-    pwm_r = spd_pid_right.update(ave_spd_right, -demand);
-
-    
+    pwm_l = spd_pid_left.update(ave_spd_left, -demand);
+    pwm_r = spd_pid_right.update(ave_spd_right, demand);
     motors.setMotorPower(pwm_l, pwm_r);
 
     Serial.print( ave_spd_left );
@@ -116,27 +100,5 @@ void loop() {
     Serial.print(",");
     Serial.print( ave_spd_right );
     Serial.print("\n");
-
-    
   }
-  
-  
-  if ( millis() - pid_test_ts > 2000) {
-    pid_test_ts = millis();
-
-    //demand = demand * -1;
-    //demand = 0;
-  }
-    
-  /*
-  kinematics.update();
-  Serial.print(kinematics.XI);
-  Serial.print(",");
-  Serial.print(kinematics.YI);
-  Serial.print(",");
-  Serial.print(kinematics.thetaI);
-  Serial.print("\n");
-  */
-
-}
 }
