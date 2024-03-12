@@ -92,7 +92,7 @@ void loop() {
     else if (state == RETRIEVE_DATA) {
       data.reportResultsOverSerial();
       motors.setMotorPower(0, 0);
-      delay(30000);
+      delay(3000);
     }
     /*Serial.print(x_position);
     Serial.print(",");

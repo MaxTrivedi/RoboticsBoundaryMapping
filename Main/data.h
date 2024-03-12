@@ -20,7 +20,7 @@ class Data_c {
     
     void updateResults(float new_items[NUM_ITEMS]) {
         for( int i = 0; i < NUM_ITEMS; i++ ) {
-          results[ results_index ][NUM_ITEMS] = new_items[NUM_ITEMS];
+          results[ results_index ][i] = new_items[i];
         }
         results_index++;
     }
