@@ -2,7 +2,6 @@
 u8 USB_SendSpace(u8 ep);
 #define SERIAL_ACTIVE (USB_SendSpace(CDC_TX) >= 50)
 
-
 #include "motors.h"
 #include "frontsensor.h"
 #include "data.h"
@@ -18,8 +17,7 @@ u8 USB_SendSpace(u8 ep);
 
 boolean led_state;  // Variable to "remember" the state of the LED, and toggle it.
 // Global definition of the time interval
-# define FRONT_SENSOR_UPDATE 500
-# define KINEMATICS_UPDATE  500
+# define KINEMATIC_SENSOR_UPDATE  50
 
 // Timestamps for different contexts.
 unsigned long motor_ts;
@@ -64,28 +62,23 @@ void setup() {
 void loop() {
   unsigned long current_ts = millis();
 
-  // Line Sensor Update
-  if (current_ts - front_sensor_ts > FRONT_SENSOR_UPDATE) {
-    frontsensor.readFrontSensors();
-    front_sensor_ts = millis();
-  }
-
-
-  if (current_ts - kinematics_ts > KINEMATICS_UPDATE) {
+  if (current_ts - kinematics_ts > KINEMATIC_SENSOR_UPDATE) {
     kinematics.update();
     kinematics_ts = millis();
     float x_position = kinematics.getX_position();
     float y_position = kinematics.getY_position();
     float theta = kinematics.getThetaDeg();
-    
+
+    unsigned long leftSensorReading = frontsensor.readLeftSensor();
+    unsigned long rightSensorReading = frontsensor.readRightSensor();
 
     if (state == COLLECT_DATA) {
       if (data.resultsFull()) {
         motors.setMotorPower(0, 0);
         state = RETRIEVE_DATA;
       } else {
-        motors.setMotorPower(20, -20);
-        float new_items[3] = {x_position, y_position, theta};
+        motors.setMotorPower(17, -17);
+        float new_items[5] = {leftSensorReading, rightSensorReading, x_position, y_position, theta};
         data.updateResults(new_items);
       }
     }
@@ -94,13 +87,5 @@ void loop() {
       motors.setMotorPower(0, 0);
       delay(3000);
     }
-    /*Serial.print(x_position);
-    Serial.print(",");
-    Serial.print(y_position);
-    Serial.print(",");
-    Serial.println(theta);*/
   }
-
-
-
 }
