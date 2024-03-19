@@ -1,6 +1,6 @@
 //We need to know the maximum number of data items and rows of results we need before starting
-#define MAX_RESULTS 100
-#define NUM_ITEMS 3
+#define MAX_RESULTS 50
+#define NUM_ITEMS 5
 
 class Data_c {
 
@@ -40,7 +40,7 @@ class Data_c {
         if( SERIAL_ACTIVE ) Serial.print( "," );
         delay(1);
         // print x y theta
-        for( col = 0; col < 3; col++ ) {
+        for( col = 0; col < 5; col++ ) {
           if( SERIAL_ACTIVE ) Serial.print( results[row][col], 2 );
           delay(1);
           if( SERIAL_ACTIVE ) Serial.print( "," );
