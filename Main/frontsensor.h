@@ -17,7 +17,8 @@ public:
     }
 
     unsigned long readLeftSensor() {
-        digitalWrite(EMIT_PIN, HIGH);
+        pinMode(EMIT_PIN, OUTPUT);
+        digitalWrite(EMIT_PIN, LOW);
         pinMode(LEFT_BUMP_PIN, OUTPUT);
         digitalWrite(LEFT_BUMP_PIN, HIGH);
         delayMicroseconds(10);
@@ -27,12 +28,13 @@ public:
         while (digitalRead(LEFT_BUMP_PIN) == HIGH) {}
         unsigned long end_time = micros();
 
-        digitalWrite(EMIT_PIN, LOW);
+        digitalWrite(EMIT_PIN, HIGH);
         return end_time - start_time;
     }
 
     unsigned long readRightSensor() {
-        digitalWrite(EMIT_PIN, HIGH);
+        pinMode(EMIT_PIN, OUTPUT);
+        digitalWrite(EMIT_PIN, LOW);
         pinMode(RIGHT_BUMP_PIN, OUTPUT);
         digitalWrite(RIGHT_BUMP_PIN, HIGH);
         delayMicroseconds(10);
@@ -42,7 +44,7 @@ public:
         while (digitalRead(RIGHT_BUMP_PIN) == HIGH) {}
         unsigned long end_time = micros();
 
-        digitalWrite(EMIT_PIN, LOW);
+        digitalWrite(EMIT_PIN, HIGH);
         return end_time - start_time;
     }
 };
