@@ -17,7 +17,7 @@ u8 USB_SendSpace(u8 ep);
 
 boolean led_state;  // Variable to "remember" the state of the LED, and toggle it.
 // Global definition of the time interval
-# define KINEMATIC_SENSOR_UPDATE  50
+# define KINEMATIC_SENSOR_UPDATE  25
 
 // Timestamps for different contexts.
 unsigned long motor_ts;
@@ -54,7 +54,7 @@ void setup() {
   led_state = false;
 
   pinMode(BUZZER_PIN, OUTPUT);
-  //tone(BUZZER_PIN, NOTE_A4, 100);
+  tone(BUZZER_PIN, NOTE_A4, 100);
   delay(3000);
 
 }
@@ -78,10 +78,9 @@ void loop() {
         motors.setMotorPower(0, 0);
         state = RETRIEVE_DATA;
       } else {
-        motors.setMotorPower(12, -12);
+        motors.setMotorPower(15, -15);
         float new_items[5] = {leftSensorReading, rightSensorReading, x_position, y_position, theta};
         data.updateResults(new_items);
-        Serial.println(leftSensorReading);
       }
     }
     else if (state == RETRIEVE_DATA) {
