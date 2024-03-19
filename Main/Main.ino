@@ -54,7 +54,8 @@ void setup() {
   led_state = false;
 
   pinMode(BUZZER_PIN, OUTPUT);
-  tone(BUZZER_PIN, NOTE_A4, 100);
+  //tone(BUZZER_PIN, NOTE_A4, 100);
+  delay(3000);
 
 }
 
@@ -68,7 +69,7 @@ void loop() {
     float x_position = kinematics.getX_position();
     float y_position = kinematics.getY_position();
     float theta = kinematics.getThetaDeg();
-
+    frontsensor.initialise();
     unsigned long leftSensorReading = frontsensor.readLeftSensor();
     unsigned long rightSensorReading = frontsensor.readRightSensor();
 
@@ -77,15 +78,17 @@ void loop() {
         motors.setMotorPower(0, 0);
         state = RETRIEVE_DATA;
       } else {
-        motors.setMotorPower(17, -17);
+        motors.setMotorPower(12, -12);
         float new_items[5] = {leftSensorReading, rightSensorReading, x_position, y_position, theta};
         data.updateResults(new_items);
+        Serial.println(leftSensorReading);
       }
     }
     else if (state == RETRIEVE_DATA) {
       data.reportResultsOverSerial();
       motors.setMotorPower(0, 0);
       delay(3000);
+
     }
   }
 }
