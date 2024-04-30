@@ -1,6 +1,6 @@
 //We need to know the maximum number of data items and rows of results we need before starting
 #define MAX_RESULTS 50
-#define NUM_ITEMS 5
+#define NUM_ITEMS 6
 
 class Data_c {
 

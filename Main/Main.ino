@@ -23,6 +23,7 @@ boolean led_state;  // Variable to "remember" the state of the LED, and toggle i
 unsigned long motor_ts;
 unsigned long front_sensor_ts;
 unsigned long kinematics_ts;
+unsigned long last_sensor_reading_ts;
 unsigned long turnStartTime;
 float targetAngle;
 
@@ -47,6 +48,7 @@ void setup() {
   // Set initial timestamp values
   motor_ts       = millis();
   front_sensor_ts = millis();
+  last_sensor_reading_ts = millis();
 
   // Set LED pin as an output
   pinMode( LED_PIN, OUTPUT );
@@ -70,8 +72,6 @@ void loop() {
     float y_position = kinematics.getY_position();
     float theta = kinematics.getThetaDeg();
     frontsensor.initialise();
-    unsigned long leftSensorReading = frontsensor.readLeftSensor();
-    unsigned long rightSensorReading = frontsensor.readRightSensor();
 
     if (state == COLLECT_DATA) {
       if (data.resultsFull()) {
@@ -79,8 +79,13 @@ void loop() {
         state = RETRIEVE_DATA;
       } else {
         motors.setMotorPower(15, -15);
-        float new_items[5] = {leftSensorReading, rightSensorReading, x_position, y_position, theta};
-        data.updateResults(new_items);
+        if (millis() - last_sensor_reading_ts > 200) {
+          last_sensor_reading_ts = millis();
+          unsigned long leftSensorReading = frontsensor.readLeftSensor();
+          unsigned long rightSensorReading = frontsensor.readRightSensor();
+          float new_items[6] = {leftSensorReading, rightSensorReading, (float)(millis()-last_sensor_reading_ts), x_position, y_position, theta};
+          data.updateResults(new_items);
+        }
       }
     }
     else if (state == RETRIEVE_DATA) {

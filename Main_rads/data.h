@@ -1,5 +1,5 @@
 //We need to know the maximum number of data items and rows of results we need before starting
-#define MAX_RESULTS 80
+#define MAX_RESULTS 60
 #define NUM_ITEMS 6
 
 class Data_c {
@@ -40,7 +40,7 @@ class Data_c {
         if( SERIAL_ACTIVE ) Serial.print( "," );
         delay(1);
         // print row from results
-        for( col = 0; col < 5; col++ ) {
+        for( col = 0; col < NUM_ITEMS; col++ ) {
           if( SERIAL_ACTIVE ) Serial.print( results[row][col]);//, 2 );
           delay(1);
           if( SERIAL_ACTIVE ) Serial.print( "," );

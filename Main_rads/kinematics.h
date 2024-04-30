@@ -10,7 +10,7 @@ class Kinematics_c {
   public:
     
     long counter = 0;
-    long period = 1;//10;
+    long period = 0;//10;
     long prev[2] = {0, 0};
     long change[2] = {0, 0};
 

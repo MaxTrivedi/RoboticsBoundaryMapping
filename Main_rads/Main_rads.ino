@@ -37,20 +37,28 @@ void setup() {
 
 void loop() {
     if (state == COLLECT_DATA) {
-      if (kinematics.Ot < -3.1415926535897932384626433832795/3 || data.resultsFull()) {
+      // kinematics.Ot < -3.1415926535897932384626433832795/3 for angle experiment
+      if (kinematics.Xt < -5 || data.resultsFull()) {
         motors.setMotorPower(0, 0);
         state = RETRIEVE_DATA;
-        float new_items[6] = {0, 0, (float)(millis()-last_sensor_reading_ts), kinematics.Xt, kinematics.Yt, kinematics.Ot};
+        int new_items[6] = {0, 0, (float)(millis()-last_sensor_reading_ts), kinematics.Xt, kinematics.Yt, kinematics.Ot*180/3.1415926535897932384626433832795};
       }
       else{
-        motors.setMotorPower(15, -13);
+        //motors.setMotorPower(15, -13); for angle experiment
+        motors.setMotorPower(-14, -13);
         if (millis() - last_sensor_reading_ts > 20) {
             last_sensor_reading_ts = millis();
             unsigned long leftSensorReading = frontsensor.readLeftSensor();
             unsigned long rightSensorReading = frontsensor.readRightSensor();
             kinematics.update();
-            float new_items[6] = {leftSensorReading, rightSensorReading, (float)(millis()-last_sensor_reading_ts), kinematics.Xt, kinematics.Yt, kinematics.Ot};
+            float new_items[6] = {leftSensorReading, rightSensorReading, (float)(millis()-last_sensor_reading_ts), (float) kinematics.Xt, (float) kinematics.Yt, (float) kinematics.Ot};
             data.updateResults(new_items);
+            Serial.print(kinematics.Xt);
+            Serial.print(", ");
+            Serial.print(kinematics.Yt);
+            Serial.print(", ");
+            Serial.print(kinematics.Ot);
+            Serial.print("\n");
           }
       }
     } if (state == RETRIEVE_DATA) {
